@@ -31,10 +31,10 @@ export class AuthorsController {
 
   @Get()
   @HttpCode(HttpStatus.OK)
-  async getUsers(
-    @Query() pageOptionsDto: FilterAuthorDto,
+  async findAll(
+    @Query() filter: FilterAuthorDto,
   ): Promise<GenericResponseDto<PageDto<ListAuthorDto>>> {
-    return this.authorsService.findAll(pageOptionsDto);
+    return this.authorsService.findAll(filter);
   }
 
   @Post()

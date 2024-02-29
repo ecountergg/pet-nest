@@ -31,10 +31,10 @@ export class CategoriesController {
 
   @Get()
   @HttpCode(HttpStatus.OK)
-  async getUsers(
-    @Query() pageOptionsDto: FilterCategoryDto,
+  async findAll(
+    @Query() filter: FilterCategoryDto,
   ): Promise<GenericResponseDto<PageDto<ListCategoryDto>>> {
-    return this.categoriesService.findAll(pageOptionsDto);
+    return this.categoriesService.findAll(filter);
   }
 
   @Post()

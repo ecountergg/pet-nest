@@ -16,13 +16,13 @@ import {
   CreateBookDto,
   CreateBookDto as UpdateBookDto,
 } from './dtos/create-book.dto';
-import { PageOptionsDto } from 'src/base/dtos/page-option.dto';
 import { PageDto } from 'src/base/dtos/page.dto';
 import { UpdateResult } from 'typeorm';
 import { BooksService } from './services/books.service';
 import { BooksEntity } from './entities/books.entity';
 import { GenericResponseDto } from 'src/base/models/generic-response.model';
 import { ListBookModel } from './models/list-book.model';
+import { FilterBookDto } from './dtos/filter-book.dto';
 
 @Injectable()
 @Controller('books')
@@ -39,7 +39,7 @@ export class BooksController {
 
   @Get()
   async findAll(
-    @Query() pageOptionsDto: PageOptionsDto,
+    @Query() pageOptionsDto: FilterBookDto,
   ): Promise<GenericResponseDto<PageDto<ListBookModel>>> {
     return this.bookService.findAll(pageOptionsDto);
   }
