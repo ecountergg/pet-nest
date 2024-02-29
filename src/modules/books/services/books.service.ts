@@ -4,7 +4,6 @@ import { Repository, UpdateResult } from 'typeorm';
 
 import { BooksEntity } from 'src/modules/books/entities/books.entity';
 import { CreateBookDto } from '../dtos/create-book.dto';
-import { PageOptionsDto } from 'src/base/dtos/page-option.dto';
 import { PageDto } from 'src/base/dtos/page.dto';
 import { CategoriesService } from 'src/modules/categories/services/categories.service';
 import { GenericResponseDto } from 'src/base/models/generic-response.model';
@@ -12,6 +11,7 @@ import { PageMetaDto } from 'src/base/dtos/page-meta.dto';
 import { ListBookModel } from '../models/list-book.model';
 import { AuthorsService } from 'src/modules/authors/services/authors.service';
 import { PublishersService } from 'src/modules/publishers/services/publishers.service';
+import { FilterBookDto } from '../dtos/filter-book.dto';
 
 @Injectable()
 export class BooksService {
@@ -25,17 +25,51 @@ export class BooksService {
   ) {}
 
   async findAll(
-    pageOptionsDto: PageOptionsDto,
+    filter: FilterBookDto,
   ): Promise<GenericResponseDto<PageDto<ListBookModel>>> {
+    console.log(
+      filter.categoriesIds.length === 0
+        ? null
+        : filter.categoriesIds.map((item) => `"${item}"`).join(', '),
+    );
+
     const queryBuilder = this.booksRepository.createQueryBuilder('books');
 
     queryBuilder
+      .innerJoinAndSelect('books.author', 'author')
+      .innerJoinAndSelect('books.publisher', 'publisher')
       .innerJoinAndSelect('books.categories', 'categories')
-      .innerJoinAndSelect('books.authors', 'authors')
-      .innerJoinAndSelect('books.publishers', 'publisher')
-      .orderBy('books.created_at', pageOptionsDto.order)
-      .skip(pageOptionsDto.skip)
-      .take(pageOptionsDto.limit);
+      .where('(:title IS NULL OR title LIKE :title)', {
+        title: `%${filter.title}%`,
+      })
+      .andWhere('(:isbn IS NULL OR isbn LIKE :isbn)', {
+        isbn: `%${filter.isbn}%`,
+      })
+      .andWhere('(:authorName IS NULL OR author.name LIKE :authorName)', {
+        authorName: `%${filter.authorName}%`,
+      })
+      .andWhere(
+        '(:publisherName IS NULL OR publisher.name LIKE :publisherName)',
+        {
+          publisherName: `%${filter.publisherName}%`,
+        },
+      )
+      .andWhere(
+        '(:categoryId IS NULL OR categories.secure_id IN (:categoriesIds))',
+        {
+          categoryId:
+            filter.categoriesIds.length === 0
+              ? null
+              : filter.categoriesIds.join(','),
+          categoriesIds:
+            filter.categoriesIds.length === 0 ? null : filter.categoriesIds,
+        },
+      )
+      .orderBy('books.created_at', filter.order)
+      .skip(filter.skip)
+      .take(filter.limit);
+
+    console.log(queryBuilder.expressionMap.wheres);
 
     const itemCount = await queryBuilder.getCount();
     const { entities } = await queryBuilder.getRawAndEntities();
@@ -43,7 +77,7 @@ export class BooksService {
       (entity) => new ListBookModel(entity),
     );
 
-    const pageMetaDto = new PageMetaDto({ itemCount, pageOptionsDto });
+    const pageMetaDto = new PageMetaDto({ itemCount, pageOptionsDto: filter });
 
     return new GenericResponseDto(
       HttpStatus.OK,

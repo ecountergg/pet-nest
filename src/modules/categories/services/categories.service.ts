@@ -27,8 +27,8 @@ export class CategoriesService {
       .where('name LIKE :name', {
         name: `%${filter.name}%`,
       })
-      .orWhere('description LIKE :description', {
-        description: `%${filter.description}%`,
+      .andWhere('(:description IS NULL OR description LIKE :description)', {
+        description: filter.description,
       })
       .orderBy('created_at', filter.order)
       .skip(filter.skip)

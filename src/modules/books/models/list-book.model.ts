@@ -10,8 +10,8 @@ export class ListBookModel {
   isbn: string;
   page_count: number;
   price: number;
-  author_name: string;
-  publisher_name: string;
+  author_name: any;
+  publisher_name: any;
   categories: string[];
 
   constructor(entity: BooksEntity) {
@@ -21,6 +21,8 @@ export class ListBookModel {
     this.isbn = entity.isbn;
     this.page_count = entity.pageCount;
     this.price = entity.price;
+    this.author_name = entity.author.name;
+    this.publisher_name = entity.publisher.name;
     this.categories = entity.categories
       ? entity.categories.map((category) => category.name)
       : [];
