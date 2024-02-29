@@ -47,10 +47,7 @@ export class BooksEntity extends AbstractEntity {
   })
   author: AuthorsEntity;
 
-  @ManyToMany(() => CategoriesEntity, (book) => book, {
-    cascade: true,
-    eager: true,
-  })
+  @ManyToMany(() => CategoriesEntity, (book) => book, { cascade: true })
   @JoinTable({
     name: 'book_categories',
     joinColumn: {

@@ -30,9 +30,10 @@ export class BooksService {
     const queryBuilder = this.booksRepository.createQueryBuilder('books');
 
     queryBuilder
-      .innerJoinAndSelect('books.author', 'author')
-      .innerJoinAndSelect('books.publisher', 'publisher')
-      .innerJoinAndSelect('books.categories', 'categories')
+      .leftJoinAndSelect('books.author', 'author')
+      .leftJoinAndSelect('books.publisher', 'publisher')
+      .leftJoinAndSelect('books.categories', 'categories')
+      .leftJoin('books.categories', 'filterCategories')
       .where('(:title IS NULL OR title LIKE :title)', {
         title: `%${filter.title}%`,
       })
@@ -49,7 +50,7 @@ export class BooksService {
         },
       )
       .andWhere(
-        '(:categoryId IS NULL OR categories.secure_id IN (:categoriesIds))',
+        '(:categoryId IS NULL OR filterCategories.secure_id IN (:categoriesIds))',
         {
           categoryId:
             filter.categoriesIds.length === 0
@@ -59,12 +60,12 @@ export class BooksService {
             filter.categoriesIds.length === 0 ? null : filter.categoriesIds,
         },
       )
-      .orderBy('books.created_at', filter.order)
-      .skip(filter.skip)
-      .take(filter.limit);
-
+      .orderBy('books.created_at', filter.order);
     const itemCount = await queryBuilder.getCount();
-    const { entities } = await queryBuilder.getRawAndEntities();
+    const entities = await queryBuilder
+      .skip(filter.skip)
+      .take(filter.limit)
+      .getMany();
     const transformedEntities = entities.map(
       (entity) => new ListBookModel(entity),
     );
