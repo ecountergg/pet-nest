@@ -27,12 +27,6 @@ export class BooksService {
   async findAll(
     filter: FilterBookDto,
   ): Promise<GenericResponseDto<PageDto<ListBookModel>>> {
-    console.log(
-      filter.categoriesIds.length === 0
-        ? null
-        : filter.categoriesIds.map((item) => `"${item}"`).join(', '),
-    );
-
     const queryBuilder = this.booksRepository.createQueryBuilder('books');
 
     queryBuilder
