@@ -4,19 +4,19 @@ import { PageOptionsDto } from 'src/base/dtos/page-option.dto';
 export class FilterBookDto extends PageOptionsDto {
   @IsString()
   @IsOptional()
-  readonly title: string | null = null;
+  readonly title: string = '';
 
   @IsString()
   @IsOptional()
-  readonly isbn: string | null = null;
+  readonly isbn: string = '';
 
   @IsString()
   @IsOptional()
-  readonly authorName: string | null = null;
+  readonly authorName: string = '';
 
   @IsString()
   @IsOptional()
-  readonly publisherName: string | null = null;
+  readonly publisherName: string = '';
 
   @IsString({ each: true })
   @IsOptional()

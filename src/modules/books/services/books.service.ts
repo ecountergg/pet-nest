@@ -69,8 +69,6 @@ export class BooksService {
       .skip(filter.skip)
       .take(filter.limit);
 
-    console.log(queryBuilder.expressionMap.wheres);
-
     const itemCount = await queryBuilder.getCount();
     const { entities } = await queryBuilder.getRawAndEntities();
     const transformedEntities = entities.map(
