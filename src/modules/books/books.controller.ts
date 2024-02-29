@@ -6,7 +6,6 @@ import {
   Get,
   Delete,
   Body,
-  Injectable,
   Param,
   UseInterceptors,
   ClassSerializerInterceptor,
@@ -24,7 +23,6 @@ import { GenericResponseDto } from 'src/base/models/generic-response.model';
 import { ListBookModel } from './models/list-book.model';
 import { FilterBookDto } from './dtos/filter-book.dto';
 
-@Injectable()
 @Controller('books')
 @UseInterceptors(ClassSerializerInterceptor)
 export class BooksController {

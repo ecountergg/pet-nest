@@ -6,7 +6,6 @@ import {
   Get,
   HttpCode,
   HttpStatus,
-  Injectable,
   Param,
   Post,
   Put,
@@ -25,7 +24,6 @@ import { ListAuthorDto } from './dtos/list-author.dto';
 
 @Controller('authors')
 @UseInterceptors(ClassSerializerInterceptor)
-@Injectable()
 export class AuthorsController {
   constructor(private readonly authorsService: AuthorsService) {}
 

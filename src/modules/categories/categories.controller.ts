@@ -6,7 +6,6 @@ import {
   Get,
   HttpCode,
   HttpStatus,
-  Injectable,
   Param,
   Post,
   Put,
@@ -25,7 +24,6 @@ import { FilterCategoryDto } from './dtos/filter-category.dto';
 
 @Controller('categories')
 @UseInterceptors(ClassSerializerInterceptor)
-@Injectable()
 export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
 
